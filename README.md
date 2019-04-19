@@ -1,2 +1,2 @@
 # Xiropht-Miner
-Xiropht Miner compatible with Xiropht Pool Tool
+Xiropht Miner compatible with Xiropht Pool Tool only.

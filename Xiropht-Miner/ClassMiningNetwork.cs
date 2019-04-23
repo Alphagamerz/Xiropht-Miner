@@ -148,9 +148,9 @@ namespace Xiropht_Miner
                             if (received > 0)
                             {
                                 string packet = Encoding.UTF8.GetString(bufferPacket, 0, received);
-                                if (packet.Contains(Environment.NewLine))
+                                if (packet.Contains("\n"))
                                 {
-                                    var splitPacket = packet.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+                                    var splitPacket = packet.Split(new[] { "\n"}, StringSplitOptions.None);
                                     if (splitPacket.Length > 1)
                                     {
                                         foreach (var packetEach in splitPacket)
@@ -169,7 +169,7 @@ namespace Xiropht_Miner
                                     }
                                     else
                                     {
-                                        await Task.Factory.StartNew(() => HandleMiningPoolPacket(packet.Replace(Environment.NewLine, "")), CancellationToken.None, TaskCreationOptions.RunContinuationsAsynchronously, TaskScheduler.Current).ConfigureAwait(false);
+                                        await Task.Factory.StartNew(() => HandleMiningPoolPacket(packet.Replace("\n", "")), CancellationToken.None, TaskCreationOptions.RunContinuationsAsynchronously, TaskScheduler.Current).ConfigureAwait(false);
 
                                     }
                                 }
@@ -230,7 +230,7 @@ namespace Xiropht_Miner
                 {
                     using (var bufferedNetworkStream = new BufferedStream(_connectorStream, ClassConnectorSetting.MaxNetworkPacketSize))
                     {
-                        var packetByte = Encoding.UTF8.GetBytes(packet + Environment.NewLine); 
+                        var packetByte = Encoding.UTF8.GetBytes(packet + "\n"); 
                         await bufferedNetworkStream.WriteAsync(packetByte, 0, packetByte.Length);
                         await bufferedNetworkStream.FlushAsync();
                     }

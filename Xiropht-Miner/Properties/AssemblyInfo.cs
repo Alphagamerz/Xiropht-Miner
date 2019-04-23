@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
 [assembly: AssemblyTitle("Xiropht Miner")]
-[assembly: AssemblyDescription("Xiropht miner designed to mining on a pool")]
+[assembly: AssemblyDescription("Xiropht miner designed to work on a mining pool")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Xiropht")]
 [assembly: AssemblyProduct("Xiropht Miner")]

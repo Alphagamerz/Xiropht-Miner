@@ -1,7 +1,7 @@
 # Xiropht-Miner
 Xiropht Miner compatible with Xiropht Pool Tool only.
 
-<h2>Hashrate Result</h2>
+<h2>Hashrate Test Result</h2>
 
 -> Raspberry PI 3 B+ [ARM64] | 1200H/s to 1600H/s | Raspbian OS.
 

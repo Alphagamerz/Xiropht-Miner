@@ -264,7 +264,6 @@ namespace Xiropht_Miner
                         break;
                     case ClassMiningRequest.TypeJob:
                         LastPacketReceived = DateTimeOffset.Now.ToUnixTimeSeconds();
-                        ClassMining.ListOfCalculation.Clear();
                         IsLogged = true;
                         try
                         {

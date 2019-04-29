@@ -14,6 +14,7 @@
         public static string CurrentBlockKey;
         public static string CurrentBlockIndication;
         public static float CurrentMiningJob;
+        public static float CurrentMiningDifficulty;
         public static float CurrentMinRangeJob;
         public static float CurrentMaxRangeJob;
 

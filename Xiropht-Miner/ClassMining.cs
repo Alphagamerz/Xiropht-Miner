@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Xiropht_Connector_All.Utils;
 
 namespace Xiropht_Miner
 {
@@ -189,20 +190,22 @@ namespace Xiropht_Miner
                                             if (!ListOfCalculation.ContainsKey(calculation))
                                             {
                                                 string encryptedShare = MakeEncryptedShare(calculation, (idThread - 1));
-                                                // Generate SHA512 hash for block hash indication.
-                                                string hashEncryptedShare = ClassUtility.GenerateSHA512(encryptedShare);
-
-                                                if (calculationResult == ClassMiningStats.CurrentMiningJob || hashEncryptedShare == ClassMiningStats.CurrentBlockIndication)
+                                                if (encryptedShare != ClassAlgoErrorEnumeration.AlgoError)
                                                 {
-                                                    try
-                                                    {
-                                                        ListOfCalculation.Add(calculation, 0);
-                                                    }
-                                                    catch
-                                                    {
+                                                    // Generate SHA512 hash for block hash indication.
+                                                    string hashEncryptedShare = ClassUtility.GenerateSHA512(encryptedShare);
 
-                                                    }
-                                                    JObject share = new JObject
+                                                    if (calculationResult == ClassMiningStats.CurrentMiningJob || hashEncryptedShare == ClassMiningStats.CurrentBlockIndication)
+                                                    {
+                                                        try
+                                                        {
+                                                            ListOfCalculation.Add(calculation, 0);
+                                                        }
+                                                        catch
+                                                        {
+
+                                                        }
+                                                        JObject share = new JObject
                                                     {
                                                         { "type", ClassMiningRequest.TypeSubmit },
                                                         { ClassMiningRequest.SubmitResult, calculationResult },
@@ -212,8 +215,9 @@ namespace Xiropht_Miner
                                                         { ClassMiningRequest.SubmitShare, encryptedShare },
                                                         { ClassMiningRequest.SubmitHash, hashEncryptedShare }
                                                     };
-                                                    await ClassMiningNetwork.SendPacketToPoolAsync(share.ToString(Formatting.None)).ConfigureAwait(false);
+                                                        await ClassMiningNetwork.SendPacketToPoolAsync(share.ToString(Formatting.None)).ConfigureAwait(false);
 
+                                                    }
                                                 }
                                             }
                                         }
@@ -229,20 +233,22 @@ namespace Xiropht_Miner
                                                 if (!ListOfCalculation.ContainsKey(calculation))
                                                 {
                                                     string encryptedShare = MakeEncryptedShare(calculation, (idThread - 1));
-                                                    // Generate SHA512 hash for block hash indication.
-                                                    string hashEncryptedShare = ClassUtility.GenerateSHA512(encryptedShare);
-
-                                                    if (calculationResult == ClassMiningStats.CurrentMiningJob || hashEncryptedShare == ClassMiningStats.CurrentBlockIndication)
+                                                    if (encryptedShare != ClassAlgoErrorEnumeration.AlgoError)
                                                     {
-                                                        try
-                                                        {
-                                                            ListOfCalculation.Add(calculation, 0);
-                                                        }
-                                                        catch
-                                                        {
+                                                        // Generate SHA512 hash for block hash indication.
+                                                        string hashEncryptedShare = ClassUtility.GenerateSHA512(encryptedShare);
 
-                                                        }
-                                                        JObject share = new JObject
+                                                        if (calculationResult == ClassMiningStats.CurrentMiningJob || hashEncryptedShare == ClassMiningStats.CurrentBlockIndication)
+                                                        {
+                                                            try
+                                                            {
+                                                                ListOfCalculation.Add(calculation, 0);
+                                                            }
+                                                            catch
+                                                            {
+
+                                                            }
+                                                            JObject share = new JObject
                                                         {
                                                                 { "type", ClassMiningRequest.TypeSubmit },
                                                                 { ClassMiningRequest.SubmitResult, calculationResult },
@@ -252,8 +258,9 @@ namespace Xiropht_Miner
                                                                 { ClassMiningRequest.SubmitShare, encryptedShare },
                                                                 { ClassMiningRequest.SubmitHash, hashEncryptedShare }
                                                         };
-                                                        await ClassMiningNetwork.SendPacketToPoolAsync(share.ToString(Formatting.None)).ConfigureAwait(false);
+                                                            await ClassMiningNetwork.SendPacketToPoolAsync(share.ToString(Formatting.None)).ConfigureAwait(false);
 
+                                                        }
                                                     }
                                                 }
                                             }
@@ -282,29 +289,36 @@ namespace Xiropht_Miner
         /// <returns></returns>
         private static string MakeEncryptedShare(string calculation, int idThread)
         {
-            string encryptedShare = ClassUtility.StringToHexString(calculation + ClassMiningStats.CurrentBlockTimestampCreate);
-
-            // Static XOR Encryption -> Key updated from the current mining method.
-            encryptedShare = ClassUtility.EncryptXorShare(encryptedShare, ClassMiningStats.CurrentRoundXorKey.ToString());
-
-            // Dynamic AES Encryption -> Size and Key's from the current mining method and the current block key encryption.
-            for (int i = 0; i < ClassMiningStats.CurrentRoundAesRound; i++)
+            try
             {
+                string encryptedShare = ClassUtility.StringToHexString(calculation + ClassMiningStats.CurrentBlockTimestampCreate);
+
+                // Static XOR Encryption -> Key updated from the current mining method.
+                encryptedShare = ClassUtility.EncryptXorShare(encryptedShare, ClassMiningStats.CurrentRoundXorKey.ToString());
+
+                // Dynamic AES Encryption -> Size and Key's from the current mining method and the current block key encryption.
+                for (int i = 0; i < ClassMiningStats.CurrentRoundAesRound; i++)
+                {
+                    encryptedShare = ClassUtility.EncryptAesShare(encryptedShare, ClassMiningStats.CurrentBlockKey, Encoding.UTF8.GetBytes(ClassMiningStats.CurrentRoundAesKey), ClassMiningStats.CurrentRoundAesSize);
+                }
+
+                // Static XOR Encryption -> Key from the current mining method
+                encryptedShare = ClassUtility.EncryptXorShare(encryptedShare, ClassMiningStats.CurrentRoundXorKey.ToString());
+
+                // Static AES Encryption -> Size and Key's from the current mining method.
                 encryptedShare = ClassUtility.EncryptAesShare(encryptedShare, ClassMiningStats.CurrentBlockKey, Encoding.UTF8.GetBytes(ClassMiningStats.CurrentRoundAesKey), ClassMiningStats.CurrentRoundAesSize);
+
+                // Generate SHA512 HASH for the share.
+                encryptedShare = ClassUtility.GenerateSHA512(encryptedShare);
+
+                DictionaryMiningThread[idThread]++; // Calculated only from real activity.
+
+                return encryptedShare;
             }
-
-            // Static XOR Encryption -> Key from the current mining method
-            encryptedShare = ClassUtility.EncryptXorShare(encryptedShare, ClassMiningStats.CurrentRoundXorKey.ToString());
-
-            // Static AES Encryption -> Size and Key's from the current mining method.
-            encryptedShare = ClassUtility.EncryptAesShare(encryptedShare, ClassMiningStats.CurrentBlockKey, Encoding.UTF8.GetBytes(ClassMiningStats.CurrentRoundAesKey), ClassMiningStats.CurrentRoundAesSize);
-
-            // Generate SHA512 HASH for the share.
-            encryptedShare = ClassUtility.GenerateSHA512(encryptedShare);
-
-            DictionaryMiningThread[idThread]++; // Calculated only from real activity.
-
-            return encryptedShare;
+            catch
+            {
+                return ClassAlgoErrorEnumeration.AlgoError;
+            }
         }
     }
 }

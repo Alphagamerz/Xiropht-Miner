@@ -81,18 +81,18 @@ namespace Xiropht_Miner
         /// <param name="command"></param>
         private static void CommandLine(string command)
         {
-            switch(command)
+            switch (command)
             {
                 case ClassCommandLine.CommandLineHelp:
                     ShowCommandLineHelp();
                     break;
                 case ClassCommandLine.CommandLineJob:
-                    ClassConsole.ConsoleWriteLine("Current Mining Job: " + ClassMiningStats.CurrentMiningJob + " | Block ID: "+ClassMiningStats.CurrentBlockId+" | Block Difficulty: " + ClassMiningStats.CurrentMaxRangeJob, ClassConsoleEnumeration.IndexPoolConsoleMagentaLog);
+                    ClassConsole.ConsoleWriteLine("Current Mining Difficulty: " + ClassMiningStats.CurrentMiningDifficulty + " Current Mining Job: " + ClassMiningStats.CurrentMiningJob + " | Block ID: " + ClassMiningStats.CurrentBlockId + " | Block Difficulty: " + ClassMiningStats.CurrentMaxRangeJob, ClassConsoleEnumeration.IndexPoolConsoleMagentaLog);
                     break;
                 case ClassCommandLine.CommandLineStats:
                     try
                     {
-                        ClassConsole.ConsoleWriteLine("Estimated Hashrate: " + ClassMining.TotalHashrate + " H/s | Calculation Speed: "+ClassMining.TotalCalculation+" C/s | Good Share: " + ClassMiningStats.TotalGoodShare + " Invalid Share: " + ClassMiningStats.TotalInvalidShare, ClassConsoleEnumeration.IndexPoolConsoleMagentaLog);
+                        ClassConsole.ConsoleWriteLine("Estimated Hashrate: " + ClassMining.TotalHashrate + " H/s | Calculation Speed: " + ClassMining.TotalCalculation + " C/s | Good Share: " + ClassMiningStats.TotalGoodShare + " Invalid Share: " + ClassMiningStats.TotalInvalidShare, ClassConsoleEnumeration.IndexPoolConsoleMagentaLog);
                     }
                     catch
                     {

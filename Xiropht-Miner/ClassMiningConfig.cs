@@ -105,7 +105,7 @@ namespace Xiropht_Miner
                 File.Create(ClassUtility.ConvertPath(Directory.GetCurrentDirectory() + MiningConfigFile)).Close();
                 ClassConsole.ConsoleWriteLine("Write your wallet address: ", ClassConsoleEnumeration.IndexPoolConsoleYellowLog);
                 string tmpwall = Console.ReadLine();
-                while (tmpwall.Length > 96 || tmpwall.Length < 48)
+                while (tmpwall.Length > ClassConnectorSetting.MaxWalletAddressSize || tmpwall.Length < ClassConnectorSetting.MinWalletAddressSize)
                 {
                     ClassConsole.ConsoleWriteLine("Input wallet address is wrong, Xiropht wallet addresses are between 48 and 96 characters long, please try again: ", ClassConsoleEnumeration.IndexPoolConsoleYellowLog);
                     tmpwall = Console.ReadLine();
